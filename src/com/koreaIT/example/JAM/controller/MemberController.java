@@ -3,7 +3,9 @@ package com.koreaIT.example.JAM.controller;
 import java.sql.Connection;
 import java.util.Scanner;
 
+import com.koreaIT.example.JAM.Member;
 import com.koreaIT.example.JAM.service.MemberService;
+import com.koreaIT.example.JAM.session.Session;
 
 public class MemberController {
 
@@ -81,7 +83,73 @@ public class MemberController {
 		memberService.doJoin(loginId, loginPw, name);
 
 		System.out.println("회원가입이 완료되었습니다");
-		System.out.printf("[%s] 회원님 환영합니다\n", name);
+	}
+
+	public void doLogin() {
+		
+		if(Session.isLogined()) {
+			System.out.println("이미 로그인 되어있습니다");
+			return;
+		}
+		
+		System.out.println("== 로그인 ==");
+		
+		while(true) {
+			System.out.printf("아이디 : ");
+			String loginId = sc.nextLine().trim();
+			System.out.printf("비밀번호 : ");
+			String loginPw = sc.nextLine().trim();
+			
+			if (loginId.length() == 0) {
+				System.out.println("아이디를 입력해주세요");
+				continue;
+			}
+			
+			if (loginPw.length() == 0) {
+				System.out.println("비밀번호를 입력해주세요");
+				continue;
+			}
+			
+			Member member = memberService.getMemberByLoginId(loginId);
+			
+			if (member == null) {
+				System.out.printf("[%s] 은(는) 존재하지 않는 아이디입니다\n", loginId);
+				continue;
+			}
+			
+			if (member.loginPw.equals(loginPw) == false) {
+				System.out.println("비밀번호가 일치하지 않습니다");
+				continue;
+			}
+			
+			Session.login(member);
+			System.out.printf("[%s] 회원님 환영합니다\n", member.name);
+			
+			break;
+		}
+		
+	}
+
+	public void doLogout() {
+		if(Session.isLogined() == false) {
+			System.out.println("로그인 후 이용해주세요");
+			return;
+		}
+		
+		Session.logout();
+		System.out.println("로그아웃 되었습니다");
+	}
+
+	public void showProfile() {
+		if(Session.isLogined() == false) {
+			System.out.println("로그인 후 이용해주세요");
+			return;
+		}
+		
+		System.out.println("== 마이 페이지 ==");
+		System.out.printf("가입일 : %s\n", Session.loginedMember.regDate);
+		System.out.printf("아이디 : %s\n", Session.loginedMember.loginId);
+		System.out.printf("이름 : %s\n", Session.loginedMember.name);
 	}
 
 }
