@@ -56,5 +56,36 @@ public class ArticleService {
 		return articleDao.doDelete(id);
 	}
 
+	public Article getArticle(int id) {
+		
+		Map<String, Object> articleMap = articleDao.getArticle(id);
+		
+		if (articleMap.isEmpty()) {
+			return null;
+		}
+		
+		return new Article(articleMap);
+		
+	}
+
+	public List<Article> showSearchList(String search) {
+		
+		
+		List<Article> articles = new ArrayList<>();
+		
+		List<Map<String, Object>> articleSearchListMap =  articleDao.showSearchList(search);
+		
+		if (articles.isEmpty()) {
+			return null;
+		}
+		
+		for (Map<String, Object> articleSearchMap : articleSearchListMap) {
+			articles.add(new Article(articleSearchMap));
+		}
+		
+		return articles;
+	
+	}
+
 
 }

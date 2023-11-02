@@ -81,6 +81,31 @@ public class ArticleDao {
 		
 		return DBUtil.delete(conn, sql);
 	}
+
+	public Map<String, Object> getArticle(int id) {
+		
+		SecSql sql = new SecSql();
+		sql.append("SELECT *");
+		sql.append("FROM article");
+		sql.append("WHERE id = ?", id);
+
+		return DBUtil.selectRow(conn, sql);
+	}
+
+	public List<Map<String, Object>> showSearchList(String search) {
+		
+		SecSql sql = new SecSql();
+		sql.append("SELECT a.*, m.name");
+		sql.append("FROM article AS a");
+		sql.append("INNER JOIN `member` AS m");
+		sql.append("ON a.memberId = m.id");
+		sql.append("WHERE title LIKE '%?%'", search);
+		sql.append("ORDER BY a.id DESC");
+		
+		return DBUtil.selectRows(conn, sql);
+		
+		
+	}
 	
 
 }
